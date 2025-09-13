@@ -270,4 +270,166 @@ MBTI_DATA = {
         "name": "ESFP · 엔터테이너 🎭",
         "vibe": "즐거움·즉흥·감각",
         "strengths": ["발표", "즉흥성", "관찰력"],
-        "pitfalls": ["지속성 약함", "딴짓 유혹"]
+        "pitfalls": ["지속성 약함", "딴짓 유혹"],
+        "strategies": [
+            "🎥 **카메라 앞 요약**: 1분 리캡 릴스 찍기",
+            "👯 **페어 학습**: 번갈아 문제 내고 설명",
+            "⏱ **짧고 잦게(20–30분)** + 소셜 보상",
+            "🧭 **학습 체크포인트**를 경험 이벤트로 묶기",
+        ],
+        "tools": ["CapCut/Reels", "Quiz apps", "Focusmate", "TickTick"],
+        "buddies": "INTJ(구조), ISTJ(일관)",
+    },
+}
+
+MBTI_LIST = list(MBTI_DATA.keys())
+
+MOTIVATIONS = [
+    "작게 시작, 크게 완성! ✨",
+    "오늘의 1%가 일 년 뒤 37배 📈",
+    "완벽보다 완료! ✅",
+    "집중은 습관, 성과는 보너스 🎁",
+    "루틴이 재능을 이긴다 💪",
+]
+
+# ---------- 사이드바 ----------
+with st.sidebar:
+    st.markdown("## 🧠 MBTI 공부법 처방전")
+    st.markdown("센스있는 이모지 & 가벼운 효과로 동기 UP ⤴️")
+    st.divider()
+    with st.expander("🎯 사용법", expanded=True):
+        st.write(
+            "- 상단에서 **MBTI**를 고르면 맞춤 전략을 보여줘요.\n"
+            "- 우측 버튼으로 **개인 플랜**을 한 번에 복사/다운로드할 수 있어요.\n"
+            "- 가벼운 🎈 / ❄️ 효과로 재미도 챙겼어요!"
+        )
+    st.caption("Made with ❤️ for 효과적인 학습")
+
+# ---------- 헤더 ----------
+col1, col2 = st.columns([0.8, 0.2])
+with col1:
+    st.markdown("# MBTI 유형별 공부법 추천 📚✨")
+    st.markdown(f"*{random.choice(MOTIVATIONS)}*")
+with col2:
+    st.metric("오늘 날짜", datetime.now().strftime("%Y-%m-%d"))
+
+# ---------- 입력 위젯 ----------
+c1, c2 = st.columns([1, 1])
+with c1:
+    mbti = st.selectbox(
+        "당신의 MBTI를 선택하세요",
+        MBTI_LIST,
+        index=MBTI_LIST.index("INTJ") if "INTJ" in MBTI_LIST else 0,
+        help="16가지 중에서 선택!",
+    )
+with c2:
+    fun_effect = st.toggle("재미 효과 켜기 🎉", value=True, help="🎈/❄️/토스트 등 가벼운 효과")
+
+if fun_effect:
+    # 선택 시 한 번만 풍선
+    if "did_balloon" not in st.session_state:
+        st.balloons()
+        st.session_state["did_balloon"] = True
+    else:
+        st.toast("🚀 오늘도 한 걸음!", icon="🔥")
+
+data = MBTI_DATA.get(mbti)
+
+# ---------- 본문 카드 ----------
+st.markdown("### 💡 맞춤 처방")
+st.markdown('<div class="card pop">', unsafe_allow_html=True)
+st.subheader(f"{data['name']}")
+st.caption(f"학습 무드: {data['vibe']}")
+
+cols = st.columns(3)
+with cols[0]:
+    st.markdown("**강점** 🌟")
+    st.write(", ".join(data["strengths"]))
+with cols[1]:
+    st.markdown("**주의점** ⚠️")
+    st.write(", ".join(data["pitfalls"]))
+with cols[2]:
+    st.markdown("**잘 맞는 스터디 메이트** 🤝")
+    st.write(data["buddies"])
+
+st.markdown("**추천 전략**")
+for s in data["strategies"]:
+    st.markdown(f"- {s}")
+
+st.markdown("**추천 도구** 🧰")
+tool_line = " ".join([f'<span class="chip">{t}</span>' for t in data["tools"]])
+st.markdown(tool_line, unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
+
+# ---------- 개인화된 하루 루틴 생성 ----------
+st.markdown("### 🗓️ 오늘의 90분 루틴(예시)")
+routine = [
+    "⏱️ 00–05분 · 워밍업: 오늘 목표 한 줄 쓰기",
+    "📖 05–35분 · 핵심 콘텐츠 학습(개념/강의/읽기)",
+    "🧠 35–50분 · 요약/그림/설명(파인만/비주얼 노트)",
+    "🧩 50–75분 · 문제풀이/적용/퀴즈",
+    "🔁 75–85분 · 오답/막힌 부분 메모",
+    "🌿 85–90분 · 정리 & 다음 액션 1개 확정",
+]
+st.markdown('\n'.join([f"- {r}" for r in routine]))
+
+# ---------- 내보내기 / 복사 ----------
+plan_text = textwrap.dedent(f"""
+[MBTI 공부법 처방전]
+유형: {mbti} - {data['name']}
+무드: {data['vibe']}
+
+■ 강점
+- {', '.join(data['strengths'])}
+
+■ 주의점
+- {', '.join(data['pitfalls'])}
+
+■ 추천 전략
+- {data['strategies'][0]}
+- {data['strategies'][1]}
+- {data['strategies'][2]}
+- {data['strategies'][3]}
+
+■ 추천 도구
+- {', '.join(data['tools'])}
+
+■ 오늘의 90분 루틴
+- {routine[0]}
+- {routine[1]}
+- {routine[2]}
+- {routine[3]}
+- {routine[4]}
+- {routine[5]}
+
+메모: 완벽보다 완료! 오늘 할 일 1개만 확실히 끝내기 ✅
+""").strip()
+
+st.divider()
+b1, b2, b3 = st.columns([1, 1, 1])
+with b1:
+    st.download_button(
+        "📝 플랜 다운로드(.txt)",
+        plan_text.encode("utf-8"),
+        file_name=f"MBTI_{mbti}_study_plan.txt",
+        mime="text/plain",
+        help="오늘 바로 쓸 수 있는 개인 플랜",
+    )
+with b2:
+    if st.button("📋 클립보드 복사(코멘트 포함)"):
+        st.code(plan_text)
+        st.toast("복사 준비 완료! 위 텍스트를 ⌘/Ctrl+C 누르세요.", icon="📎")
+with b3:
+    if fun_effect and st.button("❄️ 스노우 이펙트"):
+        st.snow()
+
+# ---------- 진행도(장난감 게이지) ----------
+st.markdown("### ⏳ 집중 게이지")
+p = st.progress(0, text="집중 준비 중…")
+for i in range(0, 101, 25):
+    p.progress(i, text=f"집중 게이지 {i}%")
+st.caption("Tip: 20분만 해도 시작은 성공이에요! 💪")
+
+# 푸터
+st.markdown("---")
+st.caption("🔖 참고: 개인차가 큽니다. 도구/전략은 본인에게 맞게 가감하세요.")
